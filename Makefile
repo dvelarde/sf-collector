@@ -98,23 +98,45 @@ build/musl: init docker-base-build/musl docker-mods-build/musl docker-driver-bui
 
 .PHONY: docker-base-build
 docker-base-build:
-	( DOCKER_BUILDKIT=1 docker build --secret id=rhuser,src=$(shell pwd)/scripts/build/rhuser --secret id=rhpassword,src=$(shell pwd)/scripts/build/rhpassword --build-arg UBI_VER=${UBI_VERSION} --target base -t sysflowtelemetry/ubi:base-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBI_VERSION} -f Dockerfile.ubi.amd64 . )
+	( DOCKER_BUILDKIT=1 docker build --secret id=rhuser,src=$(shell pwd)/scripts/build/rhuser --secret id=rhpassword,src=$(shell pwd)/scripts/build/rhpassword --build-arg UBI_VER=${UBI_VERSION} --target base -t sysflowtelemetry/ubi:base-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBI_VERSION} -f Dockerfile.ubi.ppc64le . )
 
 .PHONY: docker-base-build/musl
 docker-base-build/musl:
-	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=${ALPINE_VERSION} --target base -t sysflowtelemetry/alpine:base-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${ALPINE_VERSION} -f Dockerfile.alpine.amd64 . )
+	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=${ALPINE_VERSION} --target base -t sysflowtelemetry/alpine:base-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${ALPINE_VERSION} -f Dockerfile.alpine.ppc64le . )
+
+.PHONY: docker-base-build/musl/s390x
+docker-base-build/musl/s390x:
+	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=${ALPINE_VERSION} --target base -t sysflowtelemetry/alpine:base-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${ALPINE_VERSION} -f Dockerfile.alpine.s390x . )
+
+.PHONY: docker-base-build/musl/ppc64le
+docker-base-build/musl/ppc64le:
+	( DOCKER_BUILDKIT=0 docker build --build-arg UBUNTU_VER=${UBUNTU_VERSION} --target base -t sysflowtelemetry/ubuntu:base-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBUNTU_VERSION} -f Dockerfile.ubuntu.ppc64le . )
+#DEBBIE
+#	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=3.17.0 --target base -t sysflowtelemetry/ubuntu:base-6608679-0.34.1-22.04 -f Dockerfile.alpine.ppc64le . )
+#	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=${ALPINE_VERSION} --target base -t sysflowtelemetry/alpine:base-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${ALPINE_VERSION} -f Dockerfile.alpine.ppc64le . )
+
 
 .PHONY: docker-mods-build
 docker-mods-build:
-	( DOCKER_BUILDKIT=1 docker build --secret id=rhuser,src=$(shell pwd)/scripts/build/rhuser --secret id=rhpassword,src=$(shell pwd)/scripts/build/rhpassword --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg UBI_VER=${UBI_VERSION} --target mods -t sysflowtelemetry/ubi:mods-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBI_VERSION} -f Dockerfile.ubi.amd64 . )
+	( DOCKER_BUILDKIT=1 docker build --secret id=rhuser,src=$(shell pwd)/scripts/build/rhuser --secret id=rhpassword,src=$(shell pwd)/scripts/build/rhpassword --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg UBI_VER=${UBI_VERSION} --target mods -t sysflowtelemetry/ubi:mods-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBI_VERSION} -f Dockerfile.ubi.ppc64le . )
 
 .PHONY: docker-mods-build/musl
 docker-mods-build/musl:
-	( DOCKER_BUILDKIT=1 docker build --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg ALPINE_VER=${ALPINE_VERSION} --target mods -t sysflowtelemetry/alpine:mods-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${ALPINE_VERSION} -f Dockerfile.alpine.amd64 . )
+	( DOCKER_BUILDKIT=1 docker build --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg ALPINE_VER=${ALPINE_VERSION} --target mods -t sysflowtelemetry/alpine:mods-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${ALPINE_VERSION} -f Dockerfile.alpine.ppc64le . )
+
+.PHONY: docker-mods-build/musl/s390x
+docker-mods-build/musl/s390x:
+	( DOCKER_BUILDKIT=1 docker build --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg ALPINE_VER=${ALPINE_VERSION} --target mods -t sysflowtelemetry/alpine:mods-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${ALPINE_VERSION} -f Dockerfile.alpine.s390x . )
+
+.PHONY: docker-mods-build/musl/ppc64le
+docker-mods-build/musl/ppc64le:
+	( DOCKER_BUILDKIT=0 docker build --no-cache --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg UBUNTU_VER=${UBUNTU_VERSION} --target mods -t sysflowtelemetry/ubuntu:mods-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBUNTU_VERSION} -f Dockerfile.ubuntu.ppc64le . )
+
+
 
 .PHONY: docker-driver-build
 docker-driver-build:
-	( DOCKER_BUILDKIT=1 docker build --secret id=rhuser,src=$(shell pwd)/scripts/build/rhuser --secret id=rhpassword,src=$(shell pwd)/scripts/build/rhpassword --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg UBI_VER=${UBI_VERSION} --build-arg FALCO_VER=${FALCO_VERSION} --build-arg FALCO_LIBS_VER=${FALCO_LIBS_VERSION} --target driver -t sysflowtelemetry/ubi:driver-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBI_VERSION} -f Dockerfile.driver.amd64 . )
+	( DOCKER_BUILDKIT=1 docker build --secret id=rhuser,src=$(shell pwd)/scripts/build/rhuser --secret id=rhpassword,src=$(shell pwd)/scripts/build/rhpassword --build-arg MAKE_JOBS=${MAKE_JOBS} --build-arg UBI_VER=${UBI_VERSION} --build-arg FALCO_VER=${FALCO_VERSION} --build-arg FALCO_LIBS_VER=${FALCO_LIBS_VERSION} --target driver -t sysflowtelemetry/ubi:driver-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBI_VERSION} -f Dockerfile.driver.ppc64le . )
 
 .PHONY: docker-libs-build
 docker-libs-build:
@@ -139,6 +161,22 @@ docker-runtime-build:
 .PHONY: docker-runtime-build/musl
 docker-runtime-build/musl:
 	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=${ALPINE_VERSION} --build-arg UBI_VER=${UBI_VERSION} --build-arg FALCO_VER=${FALCO_VERSION} --build-arg FALCO_LIBS_VER=${FALCO_LIBS_VERSION} --build-arg FALCO_LIBS_DRIVER_VER=${FALCO_LIBS_DRIVER_VERSION} --target runtime -t sysflowtelemetry/sf-collector-musl:${SYSFLOW_VERSION} -f Dockerfile.musl . )
+
+.PHONY: docker-driver-build/musl/s390x
+docker-driver-build/musl/s390x:
+	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=${ALPINE_VERSION} --build-arg UBI_VER=${UBI_VERSION} --build-arg FALCO_VER=${FALCO_VERSION} --build-arg FALCO_LIBS_VER=${FALCO_LIBS_VERSION} --build-arg FALCO_LIBS_DRIVER_VER=${FALCO_LIBS_DRIVER_VERSION} --target driver -t sysflowtelemetry/ubi:driver-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBI_VERSION} -f Dockerfile.driver.s390x . )
+
+.PHONY: docker-driver-build/musl/ppc64le
+docker-driver-build/musl/ppc64le:
+	( DOCKER_BUILDKIT=0 docker build --build-arg UBUNTU_VER=${UBUNTU_VERSION} --build-arg --build-arg FALCO_VER=${FALCO_VERSION} --build-arg FALCO_LIBS_VER=${FALCO_LIBS_VERSION} --build-arg FALCO_LIBS_DRIVER_VER=${FALCO_LIBS_DRIVER_VERSION} --target driver -t sysflowtelemetry/ubuntu:driver-${FALCO_LIBS_VERSION}-${FALCO_VERSION}-${UBUNTU_VERSION} -f Dockerfile.driver.ppc64le . )
+
+.PHONY: docker-runtime-build/musl/s390x
+docker-runtime-build/musl/s390x:
+	( DOCKER_BUILDKIT=1 docker build --build-arg ALPINE_VER=${ALPINE_VERSION} --build-arg UBI_VER=${UBI_VERSION} --build-arg FALCO_VER=${FALCO_VERSION} --build-arg FALCO_LIBS_VER=${FALCO_LIBS_VERSION} --build-arg FALCO_LIBS_DRIVER_VER=${FALCO_LIBS_DRIVER_VERSION} --target runtime -t sysflowtelemetry/sf-collector-musl:${SYSFLOW_VERSION} -f Dockerfile.musl . )
+
+.PHONY: docker-runtime-build/musl/ppc64le
+docker-runtime-build/musl/ppc64le:
+	( DOCKER_BUILDKIT=0 docker build --build-arg UBUNTU_VER=${UBUNTU_VERSION} --build-arg --build-arg FALCO_VER=${FALCO_VERSION} --build-arg FALCO_LIBS_VER=${FALCO_LIBS_VERSION} --build-arg FALCO_LIBS_DRIVER_VER=${FALCO_LIBS_DRIVER_VERSION} --target runtime -t sysflowtelemetry/sf-collector-musl:${SYSFLOW_VERSION} -f Dockerfile.musl . )
 
 .PHONY: docker-testing-build
 docker-testing-build:
